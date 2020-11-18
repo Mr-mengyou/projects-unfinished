@@ -1,0 +1,18 @@
+*{
+    padding: 0;
+    margin: 0;
+  }
+  body{
+      min-width: 1300px;
+      
+  }
+  a{
+    text-decoration: none;
+  }
+  li{
+    list-style: none;
+  }
+  
+  
+  
+  
