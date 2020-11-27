@@ -14,12 +14,13 @@
       </div>
       <div class="ToExcelStyle">
         <el-button size="small" @click="tableToExcel(multipleSelection)">导出表格</el-button>
+        <el-button size="small" @click="batchDownload(multipleSelection)">批量下载报名材料</el-button>
       </div>
       
       
     </div>
     
-    <el-table :data="init_tableData" style="width: 100%" @selection-change="handleSelectionChange">
+    <el-table ref="multipleTable" :data="init_tableData" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="addDate" label="创建日期" align="center" width="120"></el-table-column>
       <el-table-column prop="matchName" label="比赛名称" align="center" width="220"></el-table-column>
@@ -127,6 +128,8 @@ export default {
       link.click();
       document.body.removeChild(link);
       this.multipleSelection = []
+      this.$refs.multipleTable.clearSelection();
+      this.getRecord()
     }
 
     // filterData(tableData){

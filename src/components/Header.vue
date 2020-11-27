@@ -145,6 +145,7 @@ export default {
           });
           this.isLogin = false;
           this.loginDialog = true;
+          this.$router.push({ name: "Home" })
         }
       });
     },
