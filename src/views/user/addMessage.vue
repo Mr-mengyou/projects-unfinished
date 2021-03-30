@@ -27,7 +27,9 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="submitForm" class="submit_style">添加</el-button>
+          <el-button type="primary" @click="submitForm" class="submit_style"
+            >添加</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -35,36 +37,36 @@
 </template>
 
 <script>
-import { addMessageApi } from "../../request/api";
+import { addMessageApi } from '../../request/notifcationApi'
 export default {
   data() {
     return {
       messageForm: {
-        content: "",
-        title: ""
+        content: '',
+        title: '',
       },
       rules: {
-        title: [{ required: true, message: "请输入主题", trigger: "blur" }],
-        content: [{ required: true, message: "请输入内容", trigger: "blur" }]
-      }
-    };
+        title: [{ required: true, message: '请输入主题', trigger: 'blur' }],
+        content: [{ required: true, message: '请输入内容', trigger: 'blur' }],
+      },
+    }
   },
   methods: {
     submitForm() {
       const submitForm = {
         title: this.messageForm.title,
         content: this.messageForm.content,
-        publisher: "高长风"
-      };
-      addMessageApi(submitForm).then(res => {
-        if (res.state === "ok") {
+        publisher: '高长风',
+      }
+      addMessageApi(submitForm).then((res) => {
+        if (res.state === 'ok') {
           this.$message({
-            message: "添加成功",
-            type: "success"
-          });
-          this.messageForm = {};
+            message: '添加成功',
+            type: 'success',
+          })
+          this.messageForm = {}
         }
-      });
+      })
       //       let opt = {
       //         method: 'POST',
       //         body:JSON.stringify(submitForm),
@@ -88,9 +90,9 @@ export default {
       //           type: 'warning'
       //         });
       //       })
-    }
-  }
-};
+    },
+  },
+}
 </script>
 
 <style>
