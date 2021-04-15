@@ -12,6 +12,7 @@
 <script>
 import { getChartDataApi } from '../../request/api'
 import { matchType, majorType, departType } from '../../static/js/test'
+
 var echarts = require('echarts')
 export default {
   data() {
@@ -31,9 +32,11 @@ export default {
         console.log(res.echartsList)
         let array = res.echartsList
         let keyArr
+
         if (type == 'matchType') keyArr = matchType(array)
         if (type == 'majorType') keyArr = majorType(array)
         if (type == 'departType') keyArr = departType(array)
+        console.log(keyArr)
         // let obj = {}
         // array.forEach((item) => {
         //   if (!obj[item[this.Type]])

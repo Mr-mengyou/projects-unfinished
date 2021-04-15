@@ -32,3 +32,16 @@ export const getChartDataApi = function(dataType) {
 export const testApi = function() {
     return Vue.prototype.$get()
 }
+
+//获取首页信息
+const getHomeContentURL = '/home/getContent'
+export const getHomeContentApi = function() {
+    return Vue.prototype.$get(getHomeContentURL)
+}
+
+//获取首页图片
+
+const getHomeImageURL = '/home/getBackground'
+export const getHomeImageApi = function() {
+    return Vue.prototype.$get(getHomeImageURL)
+}

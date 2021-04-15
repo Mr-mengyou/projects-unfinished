@@ -7,10 +7,10 @@
           <p class="date">{{ item.time }}</p>
           <p class="main_content">{{ item.content }}</p>
           <br />
-          <a href>
+          <!-- <a href>
             <i style="font-size:25px" class="el-icon-star-off"></i>
             <span>收藏</span>
-          </a>
+          </a> -->
           <a href="javascript:void(0);" @click="expand_comment(index)">
             <i style="font-size:25px" class="el-icon-s-comment"></i>
             <span>评论</span>

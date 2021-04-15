@@ -65,12 +65,10 @@
                   ><a href="/myRecord">我的提交记录</a></el-dropdown-item
                 >
                 <el-dropdown-item
-                  ><a href="/myAwardInfo">我的获奖信息</a></el-dropdown-item
+                  ><a href="/awardInfo">获奖信息</a></el-dropdown-item
                 >
                 <el-dropdown-item
-                  ><a href="/myDataStatistics"
-                    >我的数据报表</a
-                  ></el-dropdown-item
+                  ><a href="/myDataStatistics">数据报表</a></el-dropdown-item
                 >
                 <el-dropdown-item
                   ><a @click="logout">退出登录</a></el-dropdown-item

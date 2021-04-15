@@ -11,9 +11,9 @@ import {
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import './static/css/index.css'
-import echarts from 'echarts'
+import scroll from 'vue-seamless-scroll'
+Vue.use(scroll)
 
-Vue.prototype.$echarts = echarts
 
 Vue.config.productionTip = false
 Vue.prototype.$post = post
