@@ -5,15 +5,33 @@
         <div slot="header">
           <h3 class="name">{{ item.title }}</h3>
           <p class="date">{{ item.time }}</p>
-          <p class="main_content">{{ item.content }}</p>
+          <span class="main_content">
+            {{ textExpand[index] ? item.content : capitalize(item.content) }}
+          </span>
+
+          <span
+            @click="textExpandClick(index)"
+            style="color:#0fbcf9"
+            v-if="item.content.length >= 100"
+            >{{ textExpand[index] ? '收缩' : '展开'
+            }}<i
+              :class="
+                textExpand[index] ? 'el-icon-arrow-up' : 'el-icon-arrow-down'
+              "
+            ></i
+          ></span>
           <br />
           <!-- <a href>
             <i style="font-size:25px" class="el-icon-star-off"></i>
             <span>收藏</span>
           </a> -->
-          <a href="javascript:void(0);" @click="expand_comment(index)">
-            <i style="font-size:25px" class="el-icon-s-comment"></i>
-            <span>评论</span>
+          <a
+            href="javascript:void(0);"
+            @click="expand_comment(index)"
+            class="comment-layout"
+          >
+            <i style="font-size:25px" class="el-icon-chat-dot-square"></i>
+            <span style="margin-left:7px">评论</span>
           </a>
         </div>
 
@@ -42,7 +60,7 @@
             :key="index2"
           >
             <div class="user-face">
-              <img src="../../assets/image/i1.jpg" alt />
+              <img :src="item2.userImage" alt />
             </div>
             <div
               class="con"
@@ -51,7 +69,10 @@
               }"
             >
               <div class="user">
-                <p style="font-size:14px">{{ item2.uid }}</p>
+                <span style="font-size:14px">
+                  {{ item2.uid }}
+                </span>
+                <span>{{ item2.userMajor }}</span>
               </div>
               <p class="text" style="margin-top:5px">{{ item2.comment }}</p>
               <div class="info">
@@ -71,7 +92,7 @@
                   :key="index3"
                 >
                   <div class="reply-user-face">
-                    <img src="../../assets/image/i1.jpg" alt />
+                    <img :src="item3.userImage" alt />
                   </div>
 
                   <div class="reply-con">
@@ -79,7 +100,10 @@
                       <span style="font-size:14px;margin-right:5px;">{{
                         item3.uid
                       }}</span>
-                      <span style="margin-right:5px;" v-if="item3.replyTo != ''"
+                      <span>{{ item3.userMajor }}</span>
+                      <span
+                        style="margin-right:5px;color:#0fbcf9"
+                        v-if="item3.replyTo != ''"
                         >@{{ item3.replyTo }}</span
                       >
                       :
@@ -157,7 +181,9 @@ export default {
   name: 'topic',
   data() {
     return {
-      BATHURL: 'http://localhost:8000',
+      // BATHURL: 'http://localhost:8000',
+
+      textExpand: [],
       activeName: 'first',
       replyTo: [],
       isexpand: [],
@@ -175,7 +201,27 @@ export default {
   created() {
     this.getTopic()
   },
+
   methods: {
+    textExpandClick(index) {
+      if (
+        this.textExpand[index] == false ||
+        this.textExpand[index] == undefined
+      ) {
+        this.$set(this.textExpand, index, true)
+      } else {
+        this.$set(this.textExpand, index, false)
+      }
+    },
+    capitalize(values) {
+      if (!values) return ''
+      values = values.toString()
+      if (values.length > 100) {
+        return values.substr(0, 100)
+      } else {
+        return values
+      }
+    },
     getTopic() {
       getTopicApi().then((res) => {
         this.topicList = res.topicList
@@ -207,6 +253,12 @@ export default {
     sendMainComment(id) {
       let mainCommentList = {
         uid: decodeURIComponent(window.atob(sessionStorage.getItem('_info'))),
+        userImage: decodeURIComponent(
+          window.atob(sessionStorage.getItem('_imageUrl'))
+        ),
+        userMajor: decodeURIComponent(
+          window.atob(sessionStorage.getItem('_major'))
+        ),
         comment: this.mainInput,
         belongId: id,
       }
@@ -217,6 +269,7 @@ export default {
               type: 'success',
               message: '发表成功',
             })
+            this.getTopic()
           } else if (res.statusCode == -2) {
             this.$message({
               type: 'error',
@@ -251,6 +304,12 @@ export default {
       let sideCommentList = {
         mainId: id,
         uid: decodeURIComponent(window.atob(sessionStorage.getItem('_info'))),
+        userImage: decodeURIComponent(
+          window.atob(sessionStorage.getItem('_imageUrl'))
+        ),
+        userMajor: decodeURIComponent(
+          window.atob(sessionStorage.getItem('_major'))
+        ),
         comment: this.input1,
         replyTo: replyTo,
       }
@@ -260,6 +319,7 @@ export default {
             type: 'success',
             message: '发表成功',
           })
+          this.getTopic()
         } else if (res.statusCode == -2) {
           this.$message({
             type: 'error',
@@ -366,11 +426,12 @@ export default {
   margin-bottom: 10px;
 }
 .main_content {
-  text-indent: 2em;
+  padding-left: 20px;
+  line-height: 30px;
 }
 span {
-  font-size: 15px;
-  margin-right: 20px;
+  font-size: 14px;
+  margin-right: 5px;
 }
 .push_comment {
   margin-top: 10px;
@@ -381,15 +442,20 @@ span {
 img {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
 }
-.reply-user-face img {
+.reply-user-face {
   float: left;
+
   width: 4%;
+  padding-left: 5px;
+
   margin-right: 10px;
 }
 .user-face {
   float: left;
-  width: 5%;
+  width: 4%;
+  padding-left: 10px;
 }
 .con {
   padding-left: 50px;
@@ -404,5 +470,9 @@ img {
 }
 .text {
   font-size: 14px;
+}
+.comment-layout {
+  display: block;
+  margin-top: 10px;
 }
 </style>

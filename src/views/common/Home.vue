@@ -1,6 +1,6 @@
 <template>
   <el-main>
-    <el-carousel :interval="2000" type="card" height="200px">
+    <el-carousel :interval="5000" type="card" height="200px">
       <el-carousel-item v-for="(item, index) in image_list" :key="index">
         <!-- <h3 class="medium">{{ item }}</h3> -->
         <img :src="item.background_url" alt />
@@ -34,7 +34,6 @@
         <div class="table">
           <ul>
             <li class="table_name">姓名</li>
-
             <li class="table_matchname">比赛</li>
             <li class="table_work">作品</li>
             <li class="table_award">奖项</li>
@@ -230,24 +229,28 @@ export default {
 .table {
   margin-left: 20px;
   width: 90%;
-  height: 20px;
+  height: 30px;
 }
 .table_name {
   float: left;
   margin-right: 50px;
+  padding-top: 12px;
 }
 .table_matchname {
   float: left;
   margin-left: 20px;
   margin-right: 60px;
+  padding-top: 12px;
 }
 .table_work {
   float: left;
   margin-left: 100px;
+  padding-top: 12px;
 }
 .table_award {
   float: right;
   margin-right: 5px;
+  padding-top: 12px;
 }
 .scroll_name {
   float: left;

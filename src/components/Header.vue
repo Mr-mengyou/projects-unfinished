@@ -11,10 +11,15 @@
               <a href="/">首页</a>
             </li>
             <li>
-              <a href="/notifications">消息</a>
+              <el-badge
+                :value="messgeValue != 0 ? messgeValue : ''"
+                class="item"
+              >
+                <a href="/notifications">消息</a>
+              </el-badge>
             </li>
             <li>
-              <el-dropdown placement="bottom-start" style="height:50px">
+              <el-dropdown placement="bottom-start" style="height:30px">
                 <a href="/activity" style="font-size:15px"
                   >活动<i class="el-icon-arrow-down el-icon--right"></i
                 ></a>
@@ -146,11 +151,13 @@
 
 <script>
 import { loginApi, checkLoginApi } from '../request/api'
+import { getUnreadApi } from '../request/notifcationApi'
 export default {
   name: 'Header',
   data() {
     return {
       imageUrl: '',
+      messgeValue: '',
       loginDialog: false,
       isLogin: false,
       accountName: '',
@@ -175,6 +182,7 @@ export default {
   computed: {},
   created() {
     this.checkLogin()
+    this.getMessageNumber()
   },
   methods: {
     checkLogin() {
@@ -331,7 +339,7 @@ export default {
             window.atob(sessionStorage.getItem('_imageUrl'))
           )
 
-          if ((this.imageUrl = 'undefined')) {
+          if ((res.data.imageUrl = undefined)) {
             this.imageUrl =
               'https://447063956-xlf.oss-cn-shanghai.aliyuncs.com/下载.jpg'
           }
@@ -341,6 +349,16 @@ export default {
             message: '登录失败,账号或者密码错误',
           })
         }
+      })
+    },
+    getMessageNumber() {
+      let username = decodeURIComponent(
+        window.atob(sessionStorage.getItem('_loginId'))
+      )
+      console.log(username)
+      getUnreadApi(username).then((res) => {
+        this.messgeValue = res.data.length
+        console.log(this.messgeValue)
       })
     },
     // checkLogin(){
@@ -470,11 +488,11 @@ img {
 
 .nav-center ul li {
   float: left;
-  margin: 0 30px;
+  margin: 20px 30px;
   /*width: 100px;*/
   padding: 0 30px;
-  height: 80px;
-  line-height: 80px;
+  height: 40px;
+  line-height: 40px;
   text-align: center;
   position: relative;
 }

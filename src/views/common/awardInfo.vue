@@ -9,6 +9,7 @@
           label="搜索"
           icon="search"
           v-model="search"
+          clearable
           placeholder="请输入搜索内容"
           @change="searchList"
         ></el-input>
@@ -59,12 +60,13 @@
         align="center"
       ></el-table-column>
     </el-table>
-    <div class="block">
+    <div class="block" v-show="this.tableData.length >= 6">
       <el-pagination
+        background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[5, 10]"
+        :page-sizes="[6, 12]"
         :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -80,11 +82,11 @@ export default {
   data() {
     return {
       search: '',
-
+      search_tableData: [], //搜索框数据
       tableData: [], //原始数据
       init_tableData: [], //分页数据
       currentPage: 1,
-      pagesize: 5,
+      pagesize: 6,
       total: 0,
     }
   },
@@ -112,7 +114,7 @@ export default {
     searchList() {
       var search = this.search
       if (search) {
-        this.init_tableData = this.tableData.filter(function(dataNews) {
+        this.search_tableData = this.tableData.filter(function(dataNews) {
           return Object.keys(dataNews).some(function(key) {
             return (
               String(dataNews[key])
@@ -121,9 +123,11 @@ export default {
             )
           })
         })
-        this.total = this.init_tableData.length
+        this.currentChangePage(this.search_tableData, 1)
+        this.total = this.search_tableData.length
       } else {
         this.currentChangePage(this.tableData, 1)
+        this.total = this.tableData.length
       }
     },
     getAwardInfo() {
@@ -142,7 +146,12 @@ export default {
     },
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage
-      this.currentChangePage(this.tableData, currentPage)
+      if (this.search) {
+        this.currentChangePage(this.search_tableData, currentPage)
+      } else {
+        this.currentChangePage(this.tableData, currentPage)
+      }
+
       console.log('点击第几页' + this.currentPage) //点击第几页
     },
 

@@ -24,155 +24,101 @@ export default {
   },
 
   methods: {
-    getTypeData(type = 'matchType' || type) {
+    getTypeData(type = 'majorType' || type) {
       let chartDom = document.getElementById('main')
       let myChart = echarts.init(chartDom)
-      let option
+      myChart.clear()
+      let option = {}
+
       getChartDataApi(type).then((res) => {
         console.log(res.echartsList)
         let array = res.echartsList
         let keyArr
+        let legendList = []
 
         if (type == 'matchType') keyArr = matchType(array)
         if (type == 'majorType') keyArr = majorType(array)
         if (type == 'departType') keyArr = departType(array)
-        console.log(keyArr)
-        // let obj = {}
-        // array.forEach((item) => {
-        //   if (!obj[item[this.Type]])
-        //     obj[item['awardName']] = [item['awardName']]
-        // })
-        // let year = []
 
-        // array.forEach((item) => {
-        //   if (year.indexOf(item.awardDate) == -1) year.push(item.awardDate)
-        // })
-
-        // for (let key in obj) {
-        //   for (let i = 0; i < year.length; i++) {
-        //     if (
-        //       array.find((item) => {
-        //         if (item.awardName == key && item.awardDate == year[i])
-        //           return true
-        //       }) !== undefined
-        //     )
-        //       continue
-        //     else {
-        //       array.push({ awardName: key, awardDate: year[i], count: 0 })
-        //     }
-        //   }
-        // }
-
-        // for (let i = 0; i < year.length; i++) {
-        //   for (let j = 0; j < array.length; j++) {
-        //     if (array[j].awardDate == year[i]) {
-        //       if (array[j].count !== 0) {
-        //         obj[array[j].awardName].push(array[j].count)
-        //       } else {
-        //         obj[array[j].awardName].push(0)
-        //       }
-        //     }
-        //   }
-        // }
-        // let keyArr = []
-        // for (let key in obj) {
-        //   keyArr.push(obj[key])
-        // }
-        // console.log('keyArr' + keyArr)
-
-        setTimeout(function() {
-          option = {
-            legend: {},
-            tooltip: {
-              trigger: 'axis',
-              showContent: false,
-            },
-
-            dataset: {
-              source: [
-                res.yearList,
-
-                // ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-                // ['计算机大赛', 0, 2, 3, 4, 5, 6],
-                // ['创新创业大赛', 2, 3, 4, 5, 6, 7],
-                // ['蓝桥杯大赛', 2, 4, 6, 8, 9, 10],
-                // ['大数据大赛', 3, 4, 5, 6, 1, 7],
-              ],
-            },
-            xAxis: { type: 'category' },
-            yAxis: { gridIndex: 0 },
-            grid: { top: '55%' },
-            series: [
-              {
-                type: 'line',
-                smooth: true,
-                seriesLayoutBy: 'row',
-                emphasis: { focus: 'series' },
-              },
-              {
-                type: 'line',
-                smooth: true,
-                seriesLayoutBy: 'row',
-                emphasis: { focus: 'series' },
-              },
-              {
-                type: 'line',
-                smooth: true,
-                seriesLayoutBy: 'row',
-                emphasis: { focus: 'series' },
-              },
-              {
-                type: 'line',
-                smooth: true,
-                seriesLayoutBy: 'row',
-                emphasis: { focus: 'series' },
-              },
-              {
-                type: 'pie',
-                id: 'pie',
-                radius: '30%',
-                center: ['50%', '25%'],
-                emphasis: { focus: 'data' },
-                label: '',
-
-                encode: {
-                  itemName: 'product',
-                  value: '',
-                  tooltip: '',
-                },
-              },
-            ],
-          }
-
-          myChart.on('updateAxisPointer', function(event) {
-            var xAxisInfo = event.axesInfo[0]
-            if (xAxisInfo) {
-              var dimension = xAxisInfo.value + 1
-              myChart.setOption({
-                series: {
-                  id: 'pie',
-                  label: {
-                    formatter: '{b}: {@[' + dimension + ']} ({d}%)',
-                  },
-                  encode: {
-                    value: dimension,
-                    tooltip: dimension,
-                  },
-                },
-              })
-            }
-          })
-          keyArr.forEach((e) => {
-            option.dataset.source.push(e)
-          })
-
-          option.series[4].encode.value = res.yearList[1]
-          option.series[4].encode.tooltip = res.yearList[1]
-          option.series[4].label = {
-            formatter: '{b}: {@' + res.yearList[1] + '} ({d}%)',
-          }
-          myChart.setOption(option)
+        keyArr.forEach((e) => {
+          legendList.push({ name: e[0] })
         })
+        console.log(legendList)
+        option = {
+          legend: {
+            data: legendList,
+          },
+
+          tooltip: {
+            trigger: 'axis',
+            showContent: false,
+          },
+
+          dataset: {
+            source: [res.yearList],
+          },
+          xAxis: { type: 'category' },
+          yAxis: { gridIndex: 0 },
+          grid: { top: '55%' },
+          series: [],
+        }
+
+        myChart.on('updateAxisPointer', function(event) {
+          var xAxisInfo = event.axesInfo[0]
+          if (xAxisInfo) {
+            var dimension = xAxisInfo.value + 1
+            myChart.setOption({
+              series: {
+                id: 'pie',
+                label: {
+                  formatter: '{b}: {@[' + dimension + ']} ({d}%)',
+                },
+                encode: {
+                  value: dimension,
+                  tooltip: dimension,
+                },
+              },
+            })
+          }
+        })
+        keyArr.forEach((e) => {
+          option.dataset.source.push(e)
+        })
+
+        for (let i = 0; i < option.dataset.source.length - 1; i++) {
+          option.series.push({
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' },
+            name: option.dataset.source[i + 1][0],
+          })
+        }
+        option.series.push({
+          type: 'pie',
+          id: 'pie',
+          radius: '30%',
+          center: ['50%', '25%'],
+          emphasis: { focus: 'data' },
+          label: '',
+
+          encode: {
+            itemName: 'product',
+            value: '',
+            tooltip: '',
+          },
+        })
+        console.log(option.color)
+        console.log(option.legend.data)
+        console.log(option.dataset.source)
+        console.log('series', option.series)
+
+        option.series[option.series.length - 1].encode.value = res.yearList[1]
+        option.series[option.series.length - 1].encode.tooltip = res.yearList[1]
+        option.series[option.series.length - 1].label = {
+          formatter: '{b}: {@' + res.yearList[1] + '} ({d}%)',
+        }
+        myChart.setOption(option)
       })
     },
     getMajorData() {},

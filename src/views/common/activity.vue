@@ -10,6 +10,7 @@
           icon="search"
           v-model="search"
           placeholder="请输入搜索内容"
+          @change="searchList"
         ></el-input>
       </div>
     </div>
@@ -67,6 +68,19 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="block" v-show="this.tableData.length >= 5">
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[5, 10]"
+        :page-size="pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
+    </div>
   </el-main>
 </template>
 
@@ -101,14 +115,39 @@ export default {
     return {
       search: '',
       nowTime: '',
-      tableData: [],
+      tableData: [], //原始数据
+
+      init_tableData: [], //分页数据
+      currentPage: 1,
+      pagesize: 5,
+      total: 0,
     }
   },
-  computed: {
-    init_tableData: function() {
+  // computed: {
+  //   init_tableData: function() {
+  //     var search = this.search
+  //     if (search) {
+  //       return this.tableData.filter(function(dataNews) {
+  //         return Object.keys(dataNews).some(function(key) {
+  //           return (
+  //             String(dataNews[key])
+  //               .toLowerCase()
+  //               .indexOf(search) > -1
+  //           )
+  //         })
+  //       })
+  //     }
+  //     return this.tableData
+  //   },
+  // },
+  created() {
+    this.getActivityList()
+  },
+  methods: {
+    searchList() {
       var search = this.search
       if (search) {
-        return this.tableData.filter(function(dataNews) {
+        this.init_tableData = this.tableData.filter(function(dataNews) {
           return Object.keys(dataNews).some(function(key) {
             return (
               String(dataNews[key])
@@ -117,17 +156,17 @@ export default {
             )
           })
         })
+        this.total = this.init_tableData.length
+      } else {
+        this.currentChangePage(this.tableData, 1)
+        this.total = this.tableData.length
       }
-      return this.tableData
     },
-  },
-  created() {
-    this.getActivityList()
-  },
-  methods: {
     getActivityList() {
       getActivityApi().then((res) => {
         this.tableData = res.data
+        this.total = res.data.length
+        this.currentChangePage(this.tableData, 1)
         this.nowTime = new Date().Format('yyyy-MM-dd')
       })
       // let URL = "http://127.0.0.1:8000/activity/getActivityList"
@@ -146,6 +185,29 @@ export default {
     },
     join(index) {
       this.$router.push({ name: 'join', params: { id: index } })
+    },
+    handleSizeChange: function(size) {
+      this.pagesize = size
+      this.handleCurrentChange(this.currentPage)
+      console.log('每页下拉显示数据' + this.pagesize) //每页下拉显示数据
+    },
+    handleCurrentChange: function(currentPage) {
+      this.currentPage = currentPage
+      this.currentChangePage(this.tableData, currentPage)
+      console.log('点击第几页' + this.currentPage) //点击第几页
+    },
+
+    //切换列表页码时的处理操作
+    currentChangePage(list, currentPage) {
+      let from = (currentPage - 1) * this.pagesize //每一页开始序号
+      let to = currentPage * this.pagesize //每一页结束序号  to-from = 每页最大数据pagesize
+      // console.log(list)
+      this.init_tableData = []
+      for (; from < to; from++) {
+        if (list[from]) {
+          this.init_tableData.push(list[from])
+        }
+      }
     },
   },
 }
